@@ -1,55 +1,35 @@
 dist: xenial
 sudo: required
-
 language: c++
 compiler: g++
 os: linux
-
 before_install:
-  - test "${TRAVIS_BRANCH}" != 'coverity_scan' -o "${TRAVIS_JOB_NUMBER##*.}" = '1' || exit 0
-  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-  - pip install --user cpp-coveralls
-  - sudo apt-get -qq update
- 
+- test "${TRAVIS_BRANCH}" != 'coverity_scan' -o "${TRAVIS_JOB_NUMBER##*.}" = '1' ||
+  exit 0
+- echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END
+  CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+- pip install --user cpp-coveralls
+- sudo apt-get -qq update
+- export COVERITY_SCAN_TOKEN=iT5S_GvmP_VDuSkHmwduTA
+
+env:
+  global:
+  - secure: RYHnVGzRB24123TwRKVO67JeTgIBHUU7/Kv0dZ8OaWOZ6SNJ6+FcE5zZWqrCAPHKikLpqHmDel1q0PhqcT1eZi2DXYNameuo/BOPseHXO9ujfvsrLHmI5MqzZLdh/kUXYnWFxp5chOTLu3cVWRtYioe+FS2D8zuReXBEgo3NHtMck3n71x8AXaAQnzz2/C5Fwp05/9xaYABYAgh7oW/CqhOFqO4kTZHiefW6Z1pWHp5QVAtQ1IirRL7F12g8VfWC9QhHhjDYvKbkR1TVdGm5NQnW7+ii0vlG5qav75kT7S+lt4zD6P2ojsoaQVlNTGeQDYBvMKUVCrywbW5kDSESa2Mv9/TfBssH72UEdzq9tHtctMXa8RTolJ6EhWQnUEoXIelkfmSEEpwaYbIuK91NmbnRqhazVB5tILelugdMTpkhpz4JhY4k/KWPD49kONTD1a2NFeO2Iq4b2QIxblL6NgX8EifOqArJzEh7LB/rAs3HW+R4R23rK/fNXwZN7vWZ0EfX/f8QPvG6fwz58b4gYtG+qNjqTqW7+UEppi90nTegpPNiIGk3gqbr2l4yeb78Gl8WHUOoUc1an/dEjJtuH4SilwOPfJ/XOed0xYvI5uqHn1G994wof8aFek/CfD8Wwdm68Kzxzd1ZQaL/0y9QNLSjxIINFQlvcyvj2cTdozo=
 addons:
   coverity_scan:
     project:
-      name: "01org/travis_test"
-      description: "Build submitted via Travis CI"
-    notification_email: <email address>
-    build_command_prepend: ""
-    build_command:   "make -j8"
+      name: travis_test
+      description: Build submitted via Travis CI
+      token: iT5S_GvmP_VDuSkHmwduTA
+    notification_email: "<email address>"
+    build_command_prepend: ''
+    build_command: make -j8
     branch_pattern: coverity_scan
-
 script:
-  - if [[ "${COVERITY_SCAN_BRANCH}" == 1 ]];
-      then
-        echo "Don't build on coverty_scan branch.";
-        exit 0;
-    fi
-  - make -j8
-
+- make -j8
 after_success:
-        - coveralls --exclude lib --exclude tests --gcov-options '\-lp'
-
+- coveralls --exclude lib --exclude tests --gcov-options '\-lp'
 notifications:
-# Emails are sent to the committer's git-configured email address by default,
-# but only if they have access to the repository.  To enable Travis on your
-# public project, just go to travis-ci.org and flip the switch on for
-# your project.  To configure your git email address, use:
-#     git config --global user.email me@example.com
   email:
     on_success: always
     on_failure: always
-
-# Slack notifications
-#
-
-
-# IRC notifications disabled by default.
-# Uncomment next 5 lines to send notifications to chat.freenode.net#caffe
-#   irc:
-#     channels:
-#       - "chat.freenode.net#intel-media"
-#     template:
-#       - "%{repository}/%{branch} (%{commit} - %{author}): %{message}"
