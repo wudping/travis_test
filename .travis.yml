@@ -13,7 +13,7 @@ addons:
       name: travis_test
       description: Build submitted via Travis CI
       token: iT5S_GvmP_VDuSkHmwduTA
-    notification_email: "dongpingx.wu@intel.com"
+    notification_email: ""
     build_command_prepend: ''
     build_command: make -j8
     branch_pattern: coverity_scan
