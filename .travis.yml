@@ -18,7 +18,8 @@ addons:
     build_command: make -j8
     branch_pattern: coverity_scan
 
-script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
+#script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make ; fi
+script: make -j8
 
 
 
